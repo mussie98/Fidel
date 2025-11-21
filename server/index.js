@@ -64,6 +64,59 @@
 //   console.log(`Server listening at port ${PORT}`);
 // });
 
+// import express from "express";
+// import dotenv from "dotenv";
+// import cookieParser from "cookie-parser";
+// import cors from "cors";
+// import connectDB from "./database/db.js";
+
+// // Routes
+// import userRoute from "./routes/user.route.js";
+// import courseRoute from "./routes/course.route.js";
+// import mediaRoute from "./routes/media.route.js";
+// import purchaseRoute from "./routes/purchaseCourse.route.js";
+// import courseProgressRoute from "./routes/courseProgress.route.js";
+
+// dotenv.config();
+// connectDB();
+
+// const app = express();
+// const PORT = process.env.PORT || 5000;
+
+// // Middleware
+// app.use(express.json());
+// app.use(cookieParser());
+
+// // ✅ CORS configuration for local development
+// app.use(
+//   cors({
+//     origin: "https://fidel-6i1q.onrender.com", // React app URL
+//     credentials: true, // allow cookies
+//   })
+// );
+
+// // ✅ Routes
+// app.use("/api/v1/user", userRoute);
+// app.use("/api/v1/course", courseRoute);
+// app.use("/api/v1/media", mediaRoute);
+// app.use("/api/v1/purchase", purchaseRoute);
+// app.use("/api/v1/progress", courseProgressRoute);
+
+// // Health check route
+// app.get("/", (req, res) => {
+//   res.json({ status: "Backend is running!" });
+// });
+
+// // Global error handler (optional but recommended)
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).json({ success: false, message: "Server Error" });
+// });
+
+// // Start server
+// app.listen(PORT, () => {
+//   console.log(`Server listening at port ${PORT}`);
+// });
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -87,13 +140,16 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ CORS configuration for local development
+// ✅ CORS configuration for deployed frontend
 app.use(
   cors({
-    origin: "http://localhost:5173", // React app URL
+    origin: process.env.FRONTEND_URL || "https://fidel-6i1q.onrender.com", // your frontend URL
     credentials: true, // allow cookies
   })
 );
+
+// ✅ Handle preflight OPTIONS requests for all routes
+app.options("*", cors());
 
 // ✅ Routes
 app.use("/api/v1/user", userRoute);
@@ -107,7 +163,7 @@ app.get("/", (req, res) => {
   res.json({ status: "Backend is running!" });
 });
 
-// Global error handler (optional but recommended)
+// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ success: false, message: "Server Error" });
